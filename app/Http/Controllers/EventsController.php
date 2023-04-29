@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Date;
 
@@ -100,10 +103,22 @@ class EventsController extends BaseController
     ]
      */
 
-    public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+    /**
+     * get all events with workshops function
+     *
+     * @return JsonResponse|Exception
+     */
+    public function getEventsWithWorkshops():JsonResponse|Exception
+    {
+        $events = Event::with('workshops')->get();
+        if ($events) {
+            return new JsonResponse(
+                $events
+            );
+        } else {
+            throw new \Exception('implement in coding task 1');
+        }
     }
-
 
     /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
     Requirements:
@@ -178,7 +193,22 @@ class EventsController extends BaseController
     ```
      */
 
-    public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+    /**
+     * get future events with workshops function
+     *
+     * @return JsonResponse|Exception
+     */
+    public function getFutureEventsWithWorkshops():JsonResponse|Exception
+    {
+        $events = Event::whereHas('workshops' , function ($sql) {
+            $sql->whereDate('start', '>', Carbon::today());
+        })->with('workshops')->get();
+        if ($events) {
+            return new JsonResponse(
+                $events
+            );
+        } else {
+            throw new \Exception('implement in coding task 2');
+        }
     }
 }

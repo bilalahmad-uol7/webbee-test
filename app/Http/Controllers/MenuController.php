@@ -4,6 +4,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 
 class MenuController extends BaseController
@@ -92,7 +94,24 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+    /**
+     * get nested Menu items function
+     *
+     * @return JsonResponse|Exception
+     */
+    public function getMenuItems():JsonResponse|Exception
+    {
+        $menuItems = MenuItem::whereNull('parent_id')
+            ->with('children')
+            ->get();
+
+        if ($menuItems) {
+            return new JsonResponse(
+                $menuItems
+            );
+        } else {
+            throw new \Exception('implement in coding task 3');
+
+        }
     }
 }
